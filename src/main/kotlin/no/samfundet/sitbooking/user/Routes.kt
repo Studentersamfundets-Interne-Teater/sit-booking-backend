@@ -11,9 +11,3 @@ fun Route.userRouting() {
         }
     }
 }
-
-fun Application.registerUserRoutes() {
-    routing {
-        userRouting()
-    }
-}
