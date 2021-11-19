@@ -1,26 +1,37 @@
 package no.samfundet.sitbooking.booking
 
 import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import kotlinx.datetime.toLocalDateTime
-import java.util.*
 
 
-fun Route.eventRouting() {
-    route("/event") {
+fun Route.bookingRouting() {
+    route("/events") {
         get {
             call.respond(
-                Booking(
-                    UUID.randomUUID(),
-                    "erikaja",
-                    "test booking",
-                    null,
-                    "2021-11-11T10:00".toLocalDateTime(),
-                    "2021-11-11T11:00".toLocalDateTime(),
-                    BookingStatus.pending
+                BookingRepository.getAllEvents()
+            )
+        }
+
+        post {
+            val newBooking = try {
+                call.receive<Booking>()
+            } catch (e: Throwable) {
+                return@post call.respondText(
+                    e?.message ?: "Parsing JSON failed",
+                    status = HttpStatusCode.BadRequest
                 )
+            }
+
+
+
+            return@post call.respondText(
+                BookingRepository.create(newBooking).toString(),
+                status = HttpStatusCode.Created
             )
         }
     }
 }
+

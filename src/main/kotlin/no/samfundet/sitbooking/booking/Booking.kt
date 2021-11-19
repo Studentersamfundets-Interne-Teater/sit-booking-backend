@@ -1,7 +1,7 @@
 package no.samfundet.sitbooking.booking
 
 import kotlinx.serialization.Serializable
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.*
@@ -10,12 +10,13 @@ import java.util.*
 
 @Serializable
 data class Booking(
-    @Serializable(with = UUIDSerializer::class) val id: UUID,
+    @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
     val userName: String,
     val title: String,
-    val description: String?,
-    val startTime: LocalDateTime,
-    val endTime: LocalDateTime,
+    val description: String? = null,
+    // Date values will be represented as epoch time in seconds
+    val startTime: Instant,
+    val endTime: Instant,
     var status: BookingStatus = BookingStatus.pending
 )
 
@@ -34,6 +35,7 @@ object UUIDSerializer : KSerializer<UUID> {
     }
 }
 
+@Suppress("EnumEntryName")
 enum class BookingStatus {
     approved, pending, rejected
 }
