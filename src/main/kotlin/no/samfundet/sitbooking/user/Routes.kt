@@ -9,7 +9,7 @@ import kotlinx.serialization.SerializationException
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 fun Route.userRouting() {
-    route("/user") {
+    route("/users") {
         get {
             call.respond(UserRepository.getAllUsers())
         }
