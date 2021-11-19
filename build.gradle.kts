@@ -8,6 +8,7 @@ plugins {
     application
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "no.samfundet.sitbooking"
@@ -33,4 +34,12 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks{
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "no.samfundet.sitbooking.ApplicationKt"))
+        }
+    }
 }
