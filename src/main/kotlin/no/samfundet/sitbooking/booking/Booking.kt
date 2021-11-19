@@ -20,9 +20,9 @@ data class Booking(
     var status: BookingStatus = BookingStatus.pending
 )
 
-@ExperimentalSerializationApi
 @Serializer(forClass = UUID::class)
 object UUIDSerializer : KSerializer<UUID> {
+    @ExperimentalSerializationApi
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
 
