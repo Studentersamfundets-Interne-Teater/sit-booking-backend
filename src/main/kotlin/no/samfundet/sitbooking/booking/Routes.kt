@@ -8,11 +8,22 @@ import io.ktor.routing.*
 
 
 fun Route.bookingRouting() {
-    route("/events") {
+    route("/bookings") {
         get {
-            call.respond(
-                BookingRepository.getAllEvents()
-            )
+            val parameters = call.request.queryParameters
+            when {
+                parameters["future"] != null && parameters["username"]?.isNullOrEmpty() == false ->
+                    call.respond(BookingRepository.getUserFutureBookings(parameters["user"]!!))
+
+                parameters["future"] != null ->
+                    call.respond(BookingRepository.getFutureBookings())
+
+                parameters["username"]?.isNullOrEmpty() == false ->
+                    call.respond(BookingRepository.getUserBookings(parameters["username"]!!))
+
+                else -> call.respond(BookingRepository.getAllBookings())
+            }
+
         }
 
         post {
