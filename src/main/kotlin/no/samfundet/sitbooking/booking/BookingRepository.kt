@@ -1,9 +1,11 @@
 package no.samfundet.sitbooking.booking
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import no.samfundet.sitbooking.plugins.PGEnum
 import no.samfundet.sitbooking.user.UserRepository
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.`java-time`.CurrentDateTime
 import org.jetbrains.exposed.sql.`java-time`.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
@@ -28,9 +30,49 @@ object BookingRepository {
 
     }
 
-    fun getAllEvents(): List<Booking> {
+    fun getAllBookings(): List<Booking> {
         return transaction {
             BookingTable.selectAll().map(::mapBooking)
+        }
+    }
+
+    fun getFutureBookings(): List<Booking> {
+        return transaction {
+            BookingTable.select {
+                BookingTable.startTime.greater(CurrentDateTime())
+            }.map(::mapBooking)
+        }
+    }
+
+    fun getBookingsWithStatus(status: BookingStatus): List<Booking> {
+        return transaction {
+            BookingTable.select {
+                BookingTable.status eq status
+            }.map(::mapBooking)
+        }
+    }
+
+    fun getFutureBookingsWithStatus(status: BookingStatus): List<Booking> {
+        return transaction {
+            BookingTable.select {
+                BookingTable.startTime greater Clock.System.now() and (BookingTable.status eq status)
+            }.map(::mapBooking)
+        }
+    }
+
+    fun getUserBookings(username: String): List<Booking> {
+        return transaction {
+            BookingTable.select {
+                BookingTable.username eq username
+            }.map(::mapBooking)
+        }
+    }
+
+    fun getUserFutureBookings(username: String): List<Booking> {
+        return transaction {
+            BookingTable.select {
+                BookingTable.username like username and (BookingTable.startTime greater Clock.System.now())
+            }.map(::mapBooking)
         }
     }
 
