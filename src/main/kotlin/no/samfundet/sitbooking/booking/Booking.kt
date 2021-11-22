@@ -14,7 +14,6 @@ data class Booking(
     val userName: String,
     val title: String,
     val description: String? = null,
-    // Date values will be represented as epoch time in seconds
     val startTime: Instant,
     val endTime: Instant,
     var status: BookingStatus = BookingStatus.pending

@@ -5,7 +5,7 @@ import no.samfundet.sitbooking.booking.BookingRepository
 import no.samfundet.sitbooking.user.UserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.*
 
 fun createBookingStatusEnum() {
     transaction {
@@ -30,10 +30,10 @@ fun createSchemas() {
 
 fun Application.setUpDatabase() {
     Database.connect(
-        "jdbc:postgresql://localhost:55000/sitbooking",
+        environment.config.property("ktor.database.url").getString(),
         driver = "org.postgresql.Driver",
-        user = "sitbooking",
-        password = "secret"
+        user = environment.config.property("ktor.database.user").getString(),
+        password = environment.config.property("ktor.database.password").getString()
     )
 
     createBookingStatusEnum()
