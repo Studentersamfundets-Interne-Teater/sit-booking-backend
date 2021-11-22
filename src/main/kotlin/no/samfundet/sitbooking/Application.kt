@@ -1,13 +1,13 @@
 package no.samfundet.sitbooking
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.application.*
 import no.samfundet.sitbooking.plugins.*
 
-fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        configureRouting()
-        configureSerialization()
-        setUpDatabase()
-    }.start(wait = true)
+
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+
+fun Application.module(testing: Boolean = false) {
+    configureRouting()
+    configureSerialization()
+    setUpDatabase()
 }

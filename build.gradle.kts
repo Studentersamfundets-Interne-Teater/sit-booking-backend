@@ -14,7 +14,7 @@ plugins {
 group = "no.samfundet.sitbooking"
 version = "0.0.1"
 application {
-    mainClass.set("no.samfundet.sitbooking.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
 repositories {
@@ -36,10 +36,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
-tasks{
+tasks {
     shadowJar {
         manifest {
-            attributes(Pair("Main-Class", "no.samfundet.sitbooking.ApplicationKt"))
+            attributes(Pair("Main-Class", "io.ktor.server.netty.EngineMain"))
         }
     }
 }
