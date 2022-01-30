@@ -29,6 +29,7 @@ object BookingRepository {
             { value -> BookingStatus.valueOf(value as String) },
             { PGEnum("bookingstatus", it) })
         val created = timestamp("created").clientDefault { Clock.System.now().toJavaInstant() }
+        val updated = timestamp("updated").clientDefault { Clock.System.now().toJavaInstant() }
     }
 
     fun getAllBookings(): List<Booking> {
