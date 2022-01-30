@@ -5,7 +5,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import no.samfundet.sitbooking.user.User
+import no.samfundet.sitbooking.user.UserWithHashedPassword
 import no.samfundet.sitbooking.user.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 
@@ -28,7 +28,7 @@ fun Route.authRouting() {
         post {
             val newUserData = call.receive<NewUser>();
             val hashedPassword = BCrypt.hashpw(newUserData.password, BCrypt.gensalt())
-            val newUser = User(
+            val newUser = UserWithHashedPassword(
                 newUserData.userName,
                 newUserData.fullName,
                 newUserData.email,

@@ -14,17 +14,6 @@ fun Route.userRouting() {
             call.respond(UserRepository.getAllUsers())
         }
 
-        post {
-            try {
-                val newUser = call.receive<User>()
-                call.respondText(UserRepository.create(newUser), status = HttpStatusCode.Created)
-            } catch (e: SerializationException) {
-                call.respondText("Malformed user object", status = HttpStatusCode.BadRequest)
-            } catch (e: ExposedSQLException) {
-                call.respondText("Database error", status = HttpStatusCode.BadRequest)
-            }
-        }
-
         get("{username}") {
             val username = call.parameters["username"] ?: return@get call.respond(
                 status = HttpStatusCode.BadRequest,

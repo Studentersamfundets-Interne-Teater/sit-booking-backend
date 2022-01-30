@@ -26,10 +26,10 @@ object UserRepository {
         }
     }
 
-    fun create(user: User): String {
+    fun create(user: UserWithHashedPassword): String {
         return transaction {
             UserTable.insert {
-                it[username] = user.userName
+                it[username] = user.username
                 it[fullName] = user.fullName
                 it[email] = user.email
                 it[phone] = user.phone
@@ -40,11 +40,10 @@ object UserRepository {
     }
 
     private fun mapUser(row: ResultRow) = User(
-        userName = row[UserTable.username],
+        username = row[UserTable.username],
         fullName = row[UserTable.fullName],
         email = row[UserTable.email],
         phone = row[UserTable.phone],
-        hashedPassword = row[UserTable.hashedPassword],
         isAdmin = row[UserTable.isAdmin]
     )
 }
