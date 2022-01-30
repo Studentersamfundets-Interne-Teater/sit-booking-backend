@@ -26,6 +26,12 @@ object UserRepository {
         }
     }
 
+    fun getUserWithHashedPasswordByUsername(username: String): UserWithHashedPassword? {
+        return transaction {
+            UserTable.select { UserTable.username eq username }.map(::mapUserWithHashedPassword).firstOrNull()
+        }
+    }
+
     fun create(user: UserWithHashedPassword): String {
         return transaction {
             UserTable.insert {
@@ -44,6 +50,15 @@ object UserRepository {
         fullName = row[UserTable.fullName],
         email = row[UserTable.email],
         phone = row[UserTable.phone],
-        isAdmin = row[UserTable.isAdmin]
+        isAdmin = row[UserTable.isAdmin],
+    )
+
+    private fun mapUserWithHashedPassword(row: ResultRow) = UserWithHashedPassword(
+        username = row[UserTable.username],
+        fullName = row[UserTable.fullName],
+        email = row[UserTable.email],
+        phone = row[UserTable.phone],
+        isAdmin = row[UserTable.isAdmin],
+        hashedPassword = row[UserTable.hashedPassword],
     )
 }

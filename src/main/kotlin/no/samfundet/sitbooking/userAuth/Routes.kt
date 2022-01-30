@@ -14,7 +14,7 @@ fun Route.authRouting() {
         post {
             val userLogin = call.receive<UserLogin>();
             val user =
-                UserRepository.getByUsername(userLogin.userName)
+                UserRepository.getUserWithHashedPasswordByUsername(userLogin.userName)
                     ?: return@post call.respond(HttpStatusCode.Unauthorized);
             if (BCrypt.checkpw(userLogin.password, user.hashedPassword)) {
                 return@post call.respondText("Success");
