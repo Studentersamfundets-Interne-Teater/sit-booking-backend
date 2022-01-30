@@ -9,6 +9,8 @@ object UserRepository {
         val fullName: Column<String> = text("fullname")
         val email: Column<String> = text("email")
         val phone: Column<String> = text("phone")
+        val hashedPassword: Column<String> = text("hashedpw")
+        val isAdmin: Column<Boolean> = bool("isadmin")
         override val primaryKey = PrimaryKey(username)
     }
 
@@ -31,6 +33,8 @@ object UserRepository {
                 it[fullName] = user.fullName
                 it[email] = user.email
                 it[phone] = user.phone
+                it[hashedPassword] = user.hashedPassword
+                it[isAdmin] = user.isAdmin
             } get UserTable.username
         }
     }
@@ -39,6 +43,8 @@ object UserRepository {
         userName = row[UserTable.username],
         fullName = row[UserTable.fullName],
         email = row[UserTable.email],
-        phone = row[UserTable.phone]
+        phone = row[UserTable.phone],
+        hashedPassword = row[UserTable.hashedPassword],
+        isAdmin = row[UserTable.isAdmin]
     )
 }

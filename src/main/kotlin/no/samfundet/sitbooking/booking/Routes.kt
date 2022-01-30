@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.SerializationException
 import java.lang.IllegalArgumentException
 import java.lang.NumberFormatException
 import java.time.DateTimeException
@@ -14,8 +15,19 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 import java.time.temporal.WeekFields
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
 fun Route.bookingRouting() {
+    val keygen = KeyGenerator.getInstance("AES")
+    keygen.init(256)
+    val key: SecretKey = keygen.generateKey()
+    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+    cipher.init(Cipher.ENCRYPT_MODE, key)
+    val ciphertext: ByteArray = cipher.doFinal("mypassword".toByteArray())
+    val iv: ByteArray = cipher.iv
+
     route("/bookings") {
         get {
             val parameters = call.request.queryParameters
@@ -58,7 +70,7 @@ fun Route.bookingRouting() {
         post {
             val newBooking = try {
                 call.receive<Booking>()
-            } catch (e: Throwable) {
+            } catch (e: SerializationException) {
                 return@post call.respondText(
                     e?.message ?: "Parsing JSON failed",
                     status = HttpStatusCode.BadRequest
@@ -72,26 +84,14 @@ fun Route.bookingRouting() {
         }
 
         get("/weekly") {
-            val year: Int
-            val weekNumber: Long
-
-            try {
-                year = call.request.queryParameters["year"]?.toInt() ?: return@get call.respondText(
-                    "Missing year parameter",
-                    status = HttpStatusCode.BadRequest
-                )
-            } catch (e: NumberFormatException) {
-                return@get call.respondText("Invalid year format", status = HttpStatusCode.BadRequest)
-            }
-
-            try {
-                weekNumber = call.request.queryParameters["week"]?.toLong() ?: return@get call.respondText(
-                    "Missing week parameter",
-                    status = HttpStatusCode.BadRequest
-                )
-            } catch (e: NumberFormatException) {
-                return@get call.respondText("Invalid week number format", status = HttpStatusCode.BadRequest)
-            }
+            val year = call.request.queryParameters["year"]?.toIntOrNull() ?: return@get call.respondText(
+                "Missing or invalid year parameter",
+                status = HttpStatusCode.BadRequest
+            )
+            val weekNumber = call.request.queryParameters["week"]?.toLongOrNull() ?: return@get call.respondText(
+                "Missing or invalid week parameter",
+                status = HttpStatusCode.BadRequest
+            )
 
             val wf = WeekFields.of(Locale.getDefault())
             val fromDateTime: LocalDate

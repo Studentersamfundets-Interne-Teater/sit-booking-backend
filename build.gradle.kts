@@ -2,6 +2,7 @@ val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val exposedVersion: String by project
+val jBCryptVersion: String by project
 
 
 plugins {
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.postgresql:postgresql:42.1.4")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("org.mindrot:jbcrypt:$jBCryptVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
