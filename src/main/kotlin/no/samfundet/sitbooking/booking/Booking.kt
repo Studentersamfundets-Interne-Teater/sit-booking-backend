@@ -11,7 +11,7 @@ import java.util.*
 @Serializable
 data class Booking(
     @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
-    val userName: String,
+    val username: String,
     val title: String,
     val description: String? = null,
     val startTime: Instant,

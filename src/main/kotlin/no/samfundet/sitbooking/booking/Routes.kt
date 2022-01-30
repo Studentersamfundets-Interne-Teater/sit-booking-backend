@@ -20,14 +20,6 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 
 fun Route.bookingRouting() {
-    val keygen = KeyGenerator.getInstance("AES")
-    keygen.init(256)
-    val key: SecretKey = keygen.generateKey()
-    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
-    cipher.init(Cipher.ENCRYPT_MODE, key)
-    val ciphertext: ByteArray = cipher.doFinal("mypassword".toByteArray())
-    val iv: ByteArray = cipher.iv
-
     route("/bookings") {
         get {
             val parameters = call.request.queryParameters
@@ -72,13 +64,13 @@ fun Route.bookingRouting() {
                 call.receive<Booking>()
             } catch (e: SerializationException) {
                 return@post call.respondText(
-                    e?.message ?: "Parsing JSON failed",
+                    e.message ?: "Parsing JSON failed",
                     status = HttpStatusCode.BadRequest
                 )
             }
 
             return@post call.respondText(
-                BookingRepository.create(newBooking).toString(),
+                BookingRepository.create(newBooking),
                 status = HttpStatusCode.Created
             )
         }

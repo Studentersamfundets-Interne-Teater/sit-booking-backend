@@ -1,6 +1,8 @@
 package no.samfundet.sitbooking.booking
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
 import java.time.Instant as jtInstant
 import no.samfundet.sitbooking.plugins.PGEnum
 import no.samfundet.sitbooking.user.UserRepository
@@ -26,7 +28,7 @@ object BookingRepository {
             "bookingstatus",
             { value -> BookingStatus.valueOf(value as String) },
             { PGEnum("bookingstatus", it) })
-
+        val created = timestamp("created").clientDefault { Clock.System.now().toJavaInstant() }
     }
 
     fun getAllBookings(): List<Booking> {
@@ -63,7 +65,7 @@ object BookingRepository {
         val newBookingId = transaction {
             BookingTable.insert {
                 it[id] = booking.id
-                it[username] = booking.userName
+                it[username] = booking.username
                 it[title] = booking.title
                 it[description] = booking.description
                 it[startTime] = java.time.Instant.ofEpochSecond(booking.startTime.epochSeconds)
@@ -76,7 +78,7 @@ object BookingRepository {
 
     private fun mapBooking(row: ResultRow) = Booking(
         id = row[BookingTable.id],
-        userName = row[BookingTable.username],
+        username = row[BookingTable.username],
         title = row[BookingTable.title],
         description = row[BookingTable.description],
         startTime = Instant.fromEpochSeconds(row[BookingTable.startTime].epochSecond),
