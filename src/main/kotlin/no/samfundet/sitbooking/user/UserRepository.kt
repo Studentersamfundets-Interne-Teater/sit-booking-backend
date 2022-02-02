@@ -1,6 +1,9 @@
 package no.samfundet.sitbooking.user
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.`java-time`.timestamp
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object UserRepository {
@@ -12,6 +15,12 @@ object UserRepository {
         val hashedPassword: Column<String> = text("hashedpw")
         val isAdmin: Column<Boolean> = bool("isadmin")
         override val primaryKey = PrimaryKey(username)
+    }
+
+    object InvitedUsersTable : Table("invited_users") {
+        val email: Column<String> = text("email")
+        val invitedAt = timestamp("invitedat").clientDefault { Clock.System.now().toJavaInstant() }
+        val acceptedAt = timestamp("acceptedat").nullable()
     }
 
     fun getAllUsers(): List<User> {
@@ -29,6 +38,20 @@ object UserRepository {
     fun getUserWithHashedPasswordByUsername(username: String): UserWithHashedPassword? {
         return transaction {
             UserTable.select { UserTable.username eq username }.map(::mapUserWithHashedPassword).firstOrNull()
+        }
+    }
+
+    fun getInvitedUserByEmail(email: String) {
+        return transaction {
+            InvitedUsersTable.select { InvitedUsersTable.email eq email }
+        }
+    }
+
+    fun setAcceptedInvitationTimeToNow(email: String) {
+        return transaction {
+            InvitedUsersTable.update({ InvitedUsersTable.email eq email }) {
+                it[acceptedAt] = Clock.System.now().toJavaInstant()
+            }
         }
     }
 
