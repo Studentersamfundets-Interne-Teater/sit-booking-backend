@@ -77,6 +77,15 @@ object BookingRepository {
         return newBookingId.toString()
     }
 
+    fun updateStatus(uuid: UUID, bookingStatus: BookingStatus) {
+        return transaction {
+            BookingTable.update({ BookingTable.id eq uuid }) {
+                it[status] = bookingStatus
+                it[updated] = Clock.System.now().toJavaInstant()
+            }
+        }
+    }
+
     private fun mapBooking(row: ResultRow) = Booking(
         id = row[BookingTable.id],
         username = row[BookingTable.username],
