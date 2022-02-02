@@ -55,6 +55,14 @@ object UserRepository {
         }
     }
 
+    fun addNewInvitations(newEmails: List<String>) {
+        return transaction {
+            InvitedUsersTable.batchInsert(newEmails) { newEmail ->
+                this[InvitedUsersTable.email] = newEmail
+            }
+        }
+    }
+
     fun create(user: UserWithHashedPassword): String {
         return transaction {
             UserTable.insert {
