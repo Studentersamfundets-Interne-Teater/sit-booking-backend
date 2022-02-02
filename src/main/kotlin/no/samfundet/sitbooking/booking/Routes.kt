@@ -59,7 +59,7 @@ fun Route.bookingRouting() {
             call.respond(BookingRepository.getBookings(username, fromDate, toDate, status))
         }
 
-        post {
+        post("/create") {
             val newBooking = try {
                 call.receive<Booking>()
             } catch (e: SerializationException) {
